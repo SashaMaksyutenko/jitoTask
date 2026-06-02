@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Table and Form</title></head>
+<body>
+
+<!-- Complex table structure -->
+<table border="1" cellpadding="4">
+    <caption>Sales Data</caption>
+    <thead>
+        <tr>
+            <th scope="col">Product</th>
+            <th scope="col">Q1</th>
+            <th scope="col">Q2</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Widget A</td>
+            <td>120</td>
+            <td>145</td>
+        </tr>
+        <tr>
+            <td>Widget B</td>
+            <td>98</td>
+            <td>110</td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3">End of report &mdash; Q2 2024</td>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- Form with various input types -->
+<form action="/api/register" method="POST" enctype="multipart/form-data">
+    <fieldset>
+        <legend>Account Details</legend>
+        <label for="name">Full Name:</label>
+        <input id="name" type="text" name="name" maxlength="100" required>
+
+        <label for="email">Email:</label>
+        <input id="email" type="email" name="email" autocomplete="email">
+
+        <label>Gender:
+            <select name="gender">
+                <option value="">-- select --</option>
+                <option value="m">Male</option>
+                <option value="f">Female</option>
+                <option value="o" selected>Other</option>
+            </select>
+        </label>
+
+        <label for="bio">Bio:</label>
+        <textarea id="bio" name="bio" rows="4" cols="40">Enter your bio here...</textarea>
+
+        <input type="file" name="avatar" accept="image/*">
+        <input type="hidden" name="csrf" value="abc123">
+        <button type="submit" class="btn btn-primary">Register</button>
+    </fieldset>
+</form>
+
+</body>
+</html>

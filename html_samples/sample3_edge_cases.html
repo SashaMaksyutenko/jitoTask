@@ -1,0 +1,30 @@
+<!-- HTML entities, boolean attributes, self-closing tags, and comments -->
+<article>
+    <!-- Section: entities -->
+    <p>Copyright &copy; 2024 &amp; all rights reserved &trade;</p>
+    <p>Price: &lt;$10 &gt; $5 &quot;discounted&quot;</p>
+    <p>Numeric entity: &#65; &#x42; &#9829;</p>
+
+    <!-- Section: boolean and valueless attributes -->
+    <form action="/submit" method="post">
+        <input type="text" name="username" placeholder="Enter name" required>
+        <input type="checkbox" name="agree" checked>
+        <input type="email" disabled value="">
+        <input type="submit" value="Submit">
+    </form>
+
+    <!-- Section: void / self-closing elements -->
+    <img src="photo.jpg" alt="A photo" width="200" height="150">
+    <br>
+    <hr>
+    <br/>
+    <meta name="description" content="Test page">
+
+    <!-- Section: nested inline elements -->
+    <p>This is <strong>bold <em>and italic</em></strong> text with a <a href="https://example.com" target="_blank">link</a>.</p>
+
+    <!-- Section: data attributes -->
+    <div data-user-id="42" data-role="admin" class="user-card">
+        <span>Admin User</span>
+    </div>
+</article>

@@ -1,0 +1,17 @@
+<!-- Malformed HTML: unclosed tags, mismatched nesting, stray close tags -->
+<div>
+    <p>This paragraph is never closed
+    <span>This span is also unclosed
+    <b>Bold text
+</div>
+
+<!-- Close tag with no matching open tag -->
+</section>
+
+<!-- Misnested tags -->
+<div>
+    <p>Start of paragraph <b>bold start</p> bold end</b>
+</div>
+
+<!-- Tag with no closing angle bracket at end of string — parser must not crash -->
+<div class="truncated

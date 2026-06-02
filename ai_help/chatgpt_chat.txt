@@ -1,0 +1,147 @@
+AI tool used: Claude Code (Anthropic) — claude-sonnet-4-6
+Date: 2026-06-02
+
+================================================================================
+USER:
+please review this task
+================================================================================
+ASSISTANT:
+[Reviewed the task and the existing files: html2json.js, index.html, README.md]
+
+Here's a full review of the task:
+
+## Task Summary
+
+This is a Jito Software Developer Intern test task. You need to implement
+`html2json(htmlText)` — a pure parser that converts an HTML string into a JSON
+object without using the DOM parser.
+
+## Key Requirements
+
+| Requirement | Details |
+|---|---|
+| No DOM parser | Can't use DOMParser, document.createElement, innerHTML, etc. |
+| Must not crash | Robust error handling for any valid (or malformed) HTML input |
+| Coverage | Handle various HTML structures: nested elements, attributes, text nodes,
+             self-closing tags, comments, doctype, entities |
+| Code quality | Clean, well-formatted, reasoned design choices |
+
+## What Needs to Be Done
+
+1. Implement `html2json()` in html2json.js — this is the core deliverable.
+   The current placeholder just returns a dummy object.
+
+2. Design a JSON schema — you need to decide how to represent HTML as JSON.
+   You'll need to justify your choice. Common approaches:
+   - htmlparser2-style: { tag, attrs, children } tree
+   - VDOM-style: { type, props, children }
+   - A flat token list vs. a nested tree
+
+3. Add `html_samples/` folder with test HTML files used during development.
+
+4. Add `ai_help/` folder with a link to this conversation.
+
+## Edge Cases to Handle
+
+- Self-closing tags (<br/>, <img/>, <meta/>, <input/>)
+- Attributes (with and without values, boolean attrs like `disabled`)
+- Nested elements
+- Text nodes mixed with elements
+- HTML entities (&copy;, &amp;, etc.)
+- Comments (<!-- ... -->)
+- DOCTYPE declaration
+- Malformed/unclosed tags
+- Script/style content (shouldn't be parsed as child elements)
+- Very long strings
+
+## Recommended Approach
+
+Write a regex/manual tokenizer that walks the string character-by-character
+or splits on tag boundaries, then builds a tree. This is the standard approach
+when DOM parsing is banned.
+
+The JSON structure recommended and justified:
+
+{
+  "type": "element",
+  "tag": "div",
+  "attributes": { "class": "container", "id": "main" },
+  "children": [
+    { "type": "text", "value": "Hello" },
+    { "type": "element", "tag": "span", "attributes": {}, "children": [] }
+  ]
+}
+
+Reasoning: mirrors the DOM tree directly, handles mixed content (text + elements),
+is easy to traverse, and maps 1:1 to how browsers parse HTML.
+
+================================================================================
+USER:
+please realize this task
+================================================================================
+ASSISTANT:
+Implemented the full solution:
+
+1. html2json.js — replaced the stub with a complete two-phase parser:
+
+   Phase 1 — Tokenizer:
+   - Walks the raw HTML string and emits typed tokens:
+     openTag, closeTag, selfClosingTag, text, comment, doctype
+   - findTagEnd() tracks single/double quote state so a `>` inside an attribute
+     value never terminates a tag early
+   - VOID_ELEMENTS set (br, img, input, link, meta, etc.) treated as
+     self-closing even without `/>`
+   - RAW_TEXT_ELEMENTS (script, style) have their inner content captured as a
+     raw text token — no child-element parsing inside them
+   - HTML entities decoded: named (&amp; &copy; etc.), numeric (&#65;),
+     hex (&#x41;)
+
+   Phase 2 — Tree builder:
+   - Maintains a stack; openTag pushes, closeTag pops backwards to the matching
+     tag (implicitly closing unclosed elements, matching browser error recovery)
+   - Top-level try/catch ensures the function never throws
+
+   Output shape (always):
+   {
+     "type": "document",
+     "children": [
+       { "type": "doctype", "value": "html" },
+       {
+         "type": "element",
+         "tag": "html",
+         "attributes": { "lang": "en" },
+         "children": [ ... ]
+       }
+     ]
+   }
+
+2. html_samples/ — 6 test files covering:
+   - sample1_full_page.html     full HTML5 document (task Example 1)
+   - sample2_simple_fragment.html  simple fragment (task Example 2)
+   - sample3_edge_cases.html    entities, booleans, self-closing, comments
+   - sample4_malformed.html     unclosed tags, misnested, truncated
+   - sample5_script_style.html  raw text elements with JS operators inside
+   - sample6_table_form.html    table + form with many input types
+
+3. README.md — updated with JSON structure rationale and parser design notes.
+
+4. ai_help/ — created with this conversation.
+
+Smoke-test results (Node.js):
+   PASS  sample1_full_page.html      (children: 2)
+   PASS  sample2_simple_fragment.html (children: 1)
+   PASS  sample3_edge_cases.html     (children: 2)
+   PASS  sample4_malformed.html      (children: 6)
+   PASS  sample5_script_style.html   (children: 2)
+   PASS  sample6_table_form.html     (children: 2)
+   PASS  edge: empty string
+   PASS  edge: null input
+   PASS  edge: whitespace only
+   PASS  edge: plain text no tags
+   PASS  edge: truncated tag
+   PASS  edge: stray close tag
+   PASS  edge: deeply nested
+   PASS  edge: attribute with > inside quotes
+
+   All passed.
+================================================================================

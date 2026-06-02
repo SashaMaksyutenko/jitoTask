@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { margin: 0; font-family: sans-serif; }
+        .container > p { color: red; }
+        a[href*="example"] { text-decoration: none; }
+    </style>
+</head>
+<body>
+    <!-- Script and style raw content must not be parsed as child elements -->
+    <p>Visible paragraph before script.</p>
+
+    <script type="text/javascript">
+        const x = 1 < 2 && 3 > 0;
+        document.querySelector("p").textContent = "Hello & <world>";
+        // </script> lookalike in a comment — parser must not be confused
+    </script>
+
+    <p>Visible paragraph after script.</p>
+
+    <noscript>
+        <p>JavaScript is disabled.</p>
+    </noscript>
+</body>
+</html>
